@@ -2,13 +2,15 @@
 
 set -e
 
+version=${1:-master}
+
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 clone_dir="$(mktemp -d)"
 trap 'rm -rf "$clone_dir"' EXIT
 crd_dir="${clone_dir}/provider-keycloak/package/crds"
 
-git clone https://github.com/crossplane-contrib/provider-keycloak "$clone_dir/provider-keycloak"
+git clone --depth 1 -b "${version}" https://github.com/crossplane-contrib/provider-keycloak "$clone_dir/provider-keycloak"
 
 kcl_dir=crossplane_provider_keycloak
 
