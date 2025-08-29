@@ -5,43 +5,45 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 import k8s.apimachinery.pkg.apis.meta.v1
 
 
-schema Function:
+schema Configuration:
     r"""
-    A Function installs an OCI compatible Crossplane package, extending
-    Crossplane with support for a new kind of composition function.
+    A Configuration installs an OCI compatible Crossplane package, extending
+    Crossplane with support for new kinds of CompositeResourceDefinitions and
+    Compositions.
 
     Read the Crossplane documentation for
-    [more information about Functions](https://docs.crossplane.io/latest/concepts/composition-functions).
+    [more information about Configuration packages](https://docs.crossplane.io/latest/concepts/packages).
 
     Attributes
     ----------
     apiVersion : str, default is "pkg.crossplane.io/v1", required
         APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind : str, default is "Function", required
+    kind : str, default is "Configuration", required
         Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     metadata : v1.ObjectMeta, default is Undefined, optional
         metadata
-    spec : PkgCrossplaneIoV1FunctionSpec, default is Undefined, optional
+    spec : PkgCrossplaneIoV1ConfigurationSpec, default is Undefined, optional
         spec
-    status : PkgCrossplaneIoV1FunctionStatus, default is Undefined, optional
+    status : PkgCrossplaneIoV1ConfigurationStatus, default is Undefined, optional
         status
     """
 
 
     apiVersion: "pkg.crossplane.io/v1" = "pkg.crossplane.io/v1"
 
-    kind: "Function" = "Function"
+    kind: "Configuration" = "Configuration"
 
     metadata?: v1.ObjectMeta
 
-    spec?: PkgCrossplaneIoV1FunctionSpec
+    spec?: PkgCrossplaneIoV1ConfigurationSpec
 
-    status?: PkgCrossplaneIoV1FunctionStatus
+    status?: PkgCrossplaneIoV1ConfigurationStatus
 
 
-schema PkgCrossplaneIoV1FunctionSpec:
+schema PkgCrossplaneIoV1ConfigurationSpec:
     r"""
-    FunctionSpec specifies the configuration of a Function.
+    ConfigurationSpec specifies details about a request to install a
+    configuration to Crossplane.
 
     Attributes
     ----------
@@ -50,18 +52,18 @@ schema PkgCrossplaneIoV1FunctionSpec:
         (scope and select) objects. May match selectors of replication controllers
         and services.
         More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    controllerConfigRef : PkgCrossplaneIoV1FunctionSpecControllerConfigRef, default is Undefined, optional
-        controller config ref
     ignoreCrossplaneConstraints : bool, default is Undefined, optional
         IgnoreCrossplaneConstraints indicates to the package manager whether to
         honor Crossplane version constrains specified by the package.
         Default is false.
     package : str, default is Undefined, required
         Package is the name of the package that is being requested.
+        must be a fully qualified image name, including the registry,
+        repository, and tag. for example, "registry.example.com/repo/package:tag".
     packagePullPolicy : str, default is "IfNotPresent", optional
         PackagePullPolicy defines the pull policy for the package.
         Default is IfNotPresent.
-    packagePullSecrets : [PkgCrossplaneIoV1FunctionSpecPackagePullSecretsItems0], default is Undefined, optional
+    packagePullSecrets : [PkgCrossplaneIoV1ConfigurationSpecPackagePullSecretsItems0], default is Undefined, optional
         PackagePullSecrets are named secrets in the same namespace that can be used
         to fetch packages from private registries.
     revisionActivationPolicy : str, default is "Automatic", optional
@@ -72,8 +74,6 @@ schema PkgCrossplaneIoV1FunctionSpec:
         RevisionHistoryLimit dictates how the package controller cleans up old
         inactive package revisions.
         Defaults to 1. Can be disabled by explicitly setting to 0.
-    runtimeConfigRef : PkgCrossplaneIoV1FunctionSpecRuntimeConfigRef, default is Undefined, optional
-        runtime config ref
     skipDependencyResolution : bool, default is Undefined, optional
         SkipDependencyResolution indicates to the package manager whether to skip
         resolving dependencies for a package. Setting this value to true may have
@@ -84,42 +84,22 @@ schema PkgCrossplaneIoV1FunctionSpec:
 
     commonLabels?: {str:str}
 
-    controllerConfigRef?: PkgCrossplaneIoV1FunctionSpecControllerConfigRef
-
     ignoreCrossplaneConstraints?: bool = False
 
     package: str
 
     packagePullPolicy?: str = "IfNotPresent"
 
-    packagePullSecrets?: [PkgCrossplaneIoV1FunctionSpecPackagePullSecretsItems0]
+    packagePullSecrets?: [PkgCrossplaneIoV1ConfigurationSpecPackagePullSecretsItems0]
 
     revisionActivationPolicy?: str = "Automatic"
 
     revisionHistoryLimit?: int = 1
 
-    runtimeConfigRef?: PkgCrossplaneIoV1FunctionSpecRuntimeConfigRef
-
     skipDependencyResolution?: bool = False
 
 
-schema PkgCrossplaneIoV1FunctionSpecControllerConfigRef:
-    r"""
-    ControllerConfigRef references a ControllerConfig resource that will be
-    used to configure the packaged controller Deployment.
-    Deprecated: Use RuntimeConfigReference instead.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the ControllerConfig.
-    """
-
-
-    name: str
-
-
-schema PkgCrossplaneIoV1FunctionSpecPackagePullSecretsItems0:
+schema PkgCrossplaneIoV1ConfigurationSpecPackagePullSecretsItems0:
     r"""
     LocalObjectReference contains enough information to let you locate the
     referenced object inside the same namespace.
@@ -138,36 +118,16 @@ schema PkgCrossplaneIoV1FunctionSpecPackagePullSecretsItems0:
     name?: str = ""
 
 
-schema PkgCrossplaneIoV1FunctionSpecRuntimeConfigRef:
+schema PkgCrossplaneIoV1ConfigurationStatus:
     r"""
-    RuntimeConfigRef references a RuntimeConfig resource that will be used
-    to configure the package runtime.
+    ConfigurationStatus represents the observed state of a Configuration.
 
     Attributes
     ----------
-    apiVersion : str, default is "pkg.crossplane.io/v1beta1", optional
-        API version of the referent.
-    kind : str, default is "DeploymentRuntimeConfig", optional
-        Kind of the referent.
-    name : str, default is Undefined, required
-        Name of the RuntimeConfig.
-    """
-
-
-    apiVersion?: str = "pkg.crossplane.io/v1beta1"
-
-    kind?: str = "DeploymentRuntimeConfig"
-
-    name: str
-
-
-schema PkgCrossplaneIoV1FunctionStatus:
-    r"""
-    FunctionStatus represents the observed state of a Function.
-
-    Attributes
-    ----------
-    conditions : [PkgCrossplaneIoV1FunctionStatusConditionsItems0], default is Undefined, optional
+    appliedImageConfigRefs : [PkgCrossplaneIoV1ConfigurationStatusAppliedImageConfigRefsItems0], default is Undefined, optional
+        AppliedImageConfigRefs records any image configs that were applied in
+        reconciling this package, and what they were used for.
+    conditions : [PkgCrossplaneIoV1ConfigurationStatusConditionsItems0], default is Undefined, optional
         Conditions of the resource.
     currentIdentifier : str, default is Undefined, optional
         CurrentIdentifier is the most recent package source that was used to
@@ -180,17 +140,44 @@ schema PkgCrossplaneIoV1FunctionStatus:
         CurrentRevision is the name of the current package revision. It will
         reflect the most up to date revision, whether it has been activated or
         not.
+    resolvedPackage : str, default is Undefined, optional
+        ResolvedPackage is the name of the package that was used for version
+        resolution. It may be different from spec.package if the package path was
+        rewritten using an image config.
     """
 
 
-    conditions?: [PkgCrossplaneIoV1FunctionStatusConditionsItems0]
+    appliedImageConfigRefs?: [PkgCrossplaneIoV1ConfigurationStatusAppliedImageConfigRefsItems0]
+
+    conditions?: [PkgCrossplaneIoV1ConfigurationStatusConditionsItems0]
 
     currentIdentifier?: str
 
     currentRevision?: str
 
+    resolvedPackage?: str
 
-schema PkgCrossplaneIoV1FunctionStatusConditionsItems0:
+
+schema PkgCrossplaneIoV1ConfigurationStatusAppliedImageConfigRefsItems0:
+    r"""
+    ImageConfigRef is a reference to an image config that indicates how the
+    referenced image config was used by the package manager.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name is the name of the image config.
+    reason : str, default is Undefined, required
+        Reason indicates what the image config was used for.
+    """
+
+
+    name: str
+
+    reason: str
+
+
+schema PkgCrossplaneIoV1ConfigurationStatusConditionsItems0:
     r"""
     A Condition that may apply to a resource.
 

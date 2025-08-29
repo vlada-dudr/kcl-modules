@@ -15,7 +15,7 @@ schema EnvironmentConfig:
 
     Attributes
     ----------
-    apiVersion : str, default is "apiextensions.crossplane.io/v1alpha1", required
+    apiVersion : str, default is "apiextensions.crossplane.io/v1beta1", required
         APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
     data : {str:any}, default is Undefined, optional
         The data of this EnvironmentConfig.
@@ -27,7 +27,7 @@ schema EnvironmentConfig:
     """
 
 
-    apiVersion: "apiextensions.crossplane.io/v1alpha1" = "apiextensions.crossplane.io/v1alpha1"
+    apiVersion: "apiextensions.crossplane.io/v1beta1" = "apiextensions.crossplane.io/v1beta1"
 
     data?: {str:any}
 

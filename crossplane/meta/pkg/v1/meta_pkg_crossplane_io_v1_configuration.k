@@ -5,55 +5,56 @@ Editing this file might prove futile when you re-run the KCL auto-gen generate c
 import k8s.apimachinery.pkg.apis.meta.v1
 
 
-schema Function:
+schema Configuration:
     r"""
-    A Function is the description of a Crossplane Function package.
+    A Configuration is the description of a Crossplane Configuration package.
 
     Attributes
     ----------
     apiVersion : str, default is "meta.pkg.crossplane.io/v1", required
         APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind : str, default is "Function", required
+    kind : str, default is "Configuration", required
         Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     metadata : v1.ObjectMeta, default is Undefined, optional
         metadata
-    spec : MetaPkgCrossplaneIoV1FunctionSpec, default is Undefined, required
+    spec : MetaPkgCrossplaneIoV1ConfigurationSpec, default is Undefined, required
         spec
     """
 
 
     apiVersion: "meta.pkg.crossplane.io/v1" = "meta.pkg.crossplane.io/v1"
 
-    kind: "Function" = "Function"
+    kind: "Configuration" = "Configuration"
 
     metadata?: v1.ObjectMeta
 
-    spec: MetaPkgCrossplaneIoV1FunctionSpec
+    spec: MetaPkgCrossplaneIoV1ConfigurationSpec
 
 
-schema MetaPkgCrossplaneIoV1FunctionSpec:
+schema MetaPkgCrossplaneIoV1ConfigurationSpec:
     r"""
-    FunctionSpec specifies the configuration of a Function.
+    ConfigurationSpec specifies the configuration of a Configuration.
 
     Attributes
     ----------
-    crossplane : MetaPkgCrossplaneIoV1FunctionSpecCrossplane, default is Undefined, optional
+    capabilities : [str], default is Undefined, optional
+        Capabilities of this package. Capabilities are opaque strings that
+        may be meaningful to package consumers.
+    crossplane : MetaPkgCrossplaneIoV1ConfigurationSpecCrossplane, default is Undefined, optional
         crossplane
-    dependsOn : [MetaPkgCrossplaneIoV1FunctionSpecDependsOnItems0], default is Undefined, optional
+    dependsOn : [MetaPkgCrossplaneIoV1ConfigurationSpecDependsOnItems0], default is Undefined, optional
         Dependencies on other packages.
-    image : str, default is Undefined, optional
-        Image is the packaged Function image.
     """
 
 
-    crossplane?: MetaPkgCrossplaneIoV1FunctionSpecCrossplane
+    capabilities?: [str]
 
-    dependsOn?: [MetaPkgCrossplaneIoV1FunctionSpecDependsOnItems0]
+    crossplane?: MetaPkgCrossplaneIoV1ConfigurationSpecCrossplane
 
-    image?: str
+    dependsOn?: [MetaPkgCrossplaneIoV1ConfigurationSpecDependsOnItems0]
 
 
-schema MetaPkgCrossplaneIoV1FunctionSpecCrossplane:
+schema MetaPkgCrossplaneIoV1ConfigurationSpecCrossplane:
     r"""
     Semantic version constraints of Crossplane that package is compatible with.
 
@@ -67,7 +68,7 @@ schema MetaPkgCrossplaneIoV1FunctionSpecCrossplane:
     version: str
 
 
-schema MetaPkgCrossplaneIoV1FunctionSpecDependsOnItems0:
+schema MetaPkgCrossplaneIoV1ConfigurationSpecDependsOnItems0:
     r"""
     Dependency is a dependency on another package. A dependency can be of an
     arbitrary API version and kind, but Crossplane expects package dependencies
@@ -81,17 +82,22 @@ schema MetaPkgCrossplaneIoV1FunctionSpecDependsOnItems0:
         APIVersion of the dependency.
     configuration : str, default is Undefined, optional
         Configuration is the name of a Configuration package image.
+        Must be a fully qualified image name, including the registry,
         Deprecated: Specify an apiVersion, kind, and package instead.
     function : str, default is Undefined, optional
         Function is the name of a Function package image.
+        Must be a fully qualified image name, including the registry,
         Deprecated: Specify an apiVersion, kind, and package instead.
     kind : str, default is Undefined, optional
         Kind of the dependency.
     package : str, default is Undefined, optional
         Package OCI reference of the dependency. Only used when apiVersion and
         kind are set.
+        Must be a fully qualified image name, including the registry,
+        repository, and tag. For example, "registry.example.com/repo/package:tag".
     provider : str, default is Undefined, optional
         Provider is the name of a Provider package image.
+        Must be a fully qualified image name, including the registry,
         Deprecated: Specify an apiVersion and kind instead.
     version : str, default is Undefined, required
         Version is the semantic version constraints of the dependency image.
